@@ -60,3 +60,8 @@
              (map get-gc-content
                   (rest (str/split fasta #">")))))))
 
+
+;; Counting Point Mutations
+
+(defn hamming-cp-mutations [a b]
+  (count (filter false? (map = a b))))
