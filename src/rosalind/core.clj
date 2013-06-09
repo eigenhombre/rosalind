@@ -47,7 +47,7 @@
                (count s)))
           
           (gc-content-percent [s]
-            (* 100 (float (gc-content s))))
+            (* 100 (float (gc-ratio-exact s))))
           
           (get-gc-content [s]
             (let [lines (str/split s #"\n")
@@ -65,3 +65,4 @@
 
 (defn hamming-cp-mutations [a b]
   (count (filter false? (map = a b))))
+
