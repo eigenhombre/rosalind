@@ -1,4 +1,4 @@
 rosalind
 ========
 
-Bioinformatics problems from Rosalind, worked in Clojure
+Bioinformatics problems from [Rosalind](http://rosalind.info/), worked in Clojure
