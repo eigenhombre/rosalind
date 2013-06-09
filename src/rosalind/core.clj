@@ -1,5 +1,5 @@
 (ns rosalind.core
-  (:use [clojure.string :only (split)]))
+  (:require [clojure.string :as str]))
 
 
 ;; Introduction to the Bioinformatics Armory
@@ -8,7 +8,6 @@
   (for [sym [\A \C \G \T]]
     ((frequencies strand) sym)))
 
-(freqs "AGACTCACCCGGGACTGCCTAAAAACGAGTCTGTACTCCTTGAGGAGAATTCACAGGAGGCCGTAGCGTTGATTGCCGCAACCCCGTCTGATCTTTTGGATCACTTGATGTTGCGTGGTATTTGGGATGGTAACACGTAGTTCTGTAGCGCGTGTGTGCTAGGGTAAGACTTATGGCTGTCAAGCAGCGTGGGCAAGCCCAGACCCGATCATCATGATGGCCTGACTGGCACTACGTATACAGGGATAGTCGTTCTTTATAAAGATTTAGAGCGTTCCCTGACGATGTCGGGCCTTGCTCTTAACCCCCAATCTCTAACCAGGGCGCGTCTCAAACTAGTGCGGCAAAGCGTCTTAACGTATCGTTGTTTGCTGAGCGCAACGGATCTACATCTCAGTTGACACAACCCTAAACGAGCAAAGTCTCTACGAATCATAACGGTCGCAACACGGGTGAACCTCAGGTTGTTAGCGTTGCTAACGAGTGTCGATTTTCATACTCTCTCCCCTGAGTATGCTTAATACAAGGGGCGAACCAGTTGATATGTGCGGTCTCGTAGGACAAGAATAGCCTGAATCGAGCATGACCCTTGTTTGTTTGGCAGATAGACACACGGAACTTACGCCCTGTGGAGTTCTTCTTCTACGTAGAAGGCACCACTACACTCGCTGCCCCGACATGAACACCCACACCAAGTGAATGAGATCCGCATCCATTTAGTGGGTCGCTAAACCCCATGCCCCGCGTCACATCCGTCCGGAGAAAAACATTTAGCTCCACTAGTTCCTCGGGTATTCGACCAAACACTTGGTTGATATATTGTGTACAATGCTAGGAGGTTAAGTAGGTTTCAGGGCCTTGGACATTGAGAGGGGGCCGGAAAGA")
 
 ;; Introduction to Protein Databases
 
@@ -20,4 +19,44 @@
 
 (doseq [s (processes-from-db "B1IMN7")]
   (println s))
+
+
+;; Transcribing DNA into RNA
+
+(defn transcribe [string]
+  (str/replace string "T" "U"))
+
+
+;; Complementing a Strand of DNA
+
+(defn revcomp [string]
+  (let [rmap {\A \T
+              \T \A
+              \C \G
+              \G \C}]
+    (apply str (map rmap (reverse string)))))
+
+
+;; Computing GC Content
+
+(defn max-gc-content [fasta]
+  (letfn [(gc-ratio-exact [s]
+            (/ (->> s
+                    (filter #{\G \C})
+                    count)
+               (count s)))
+          
+          (gc-content-percent [s]
+            (* 100 (float (gc-content s))))
+          
+          (get-gc-content [s]
+            (let [lines (str/split s #"\n")
+                  name (first lines)
+                  string (apply str (apply concat (rest lines)))]
+              [name (gc-content-percent string)]))]
+    
+    (let [record (fn [s])]
+      (apply (partial max-key second)
+             (map get-gc-content
+                  (rest (str/split fasta #">")))))))
 
