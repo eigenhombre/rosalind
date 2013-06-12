@@ -129,7 +129,7 @@
 (defn rabbits [n k]
   (first (nth
           (iterate (fn [[a b]] [b (+ b (* k a))]) [1 1])
-          (- n 1))))
+          (dec n))))
 
 (rabbits 5 3) ;=> 19
 
