@@ -108,3 +108,18 @@
     (for [i (range (count parts)) :when (= (nth parts i) m)] (inc i))))
 
 (motif-indices "GATATATGCATATACTT" "ATAT") ;=> 2 4 10
+
+
+;; Rabbits and Recurrence Relations
+
+(defn rabbits [extra-months k]
+  (loop [months (- extra-months 2)
+         pairs-last-month 1
+         pairs-this-month 1]
+    (if (= months 0)
+      pairs-this-month
+      (recur (dec months)
+             pairs-this-month
+             (+' pairs-this-month (*' pairs-last-month k))))))
+
+(rabbits 5 3) ;=> 19
