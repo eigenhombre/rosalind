@@ -112,6 +112,8 @@
 
 ;; Rabbits and Recurrence Relations
 
+;;;; Iterative solution
+
 (defn rabbits [extra-months k]
   (loop [months (- extra-months 2)
          pairs-last-month 1
@@ -122,4 +124,12 @@
              pairs-this-month
              (+' pairs-this-month (*' pairs-last-month k))))))
 
+;;;; Functional solution
+
+(defn rabbits [n k]
+  (first (nth
+          (iterate (fn [[a b]] [b (+ b (* k a))]) [1 1])
+          (- n 1))))
+
 (rabbits 5 3) ;=> 19
+
