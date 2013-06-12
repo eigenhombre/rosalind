@@ -98,3 +98,13 @@
        (map proteins)
        (take-while #(not= % 'Stop))
        (apply str)))
+
+
+;; Finding a motif in DNA
+
+(defn motif-indices [target motif]
+  (let [m (seq motif)
+        parts (partition (count m) 1 target)]
+    (for [i (range (count parts)) :when (= (nth parts i) m)] (inc i))))
+
+(motif-indices "GATATATGCATATACTT" "ATAT") ;=> 2 4 10
