@@ -45,16 +45,13 @@
                     (filter #{\G \C})
                     count)
                (count s)))
-          
           (gc-content-percent [s]
             (* 100 (float (gc-ratio-exact s))))
-          
           (get-gc-content [s]
             (let [lines (str/split s #"\n")
                   name (first lines)
                   string (apply str (apply concat (rest lines)))]
               [name (gc-content-percent string)]))]
-    
     (let [record (fn [s])]
       (apply (partial max-key second)
              (map get-gc-content
@@ -132,4 +129,56 @@
           (dec n))))
 
 (rabbits 5 3) ;=> 19
+
+
+;; Dictionaries (http://rosalind.info/problems/ini6/)
+(comment
+  (->> "/Users/jacobsen/Desktop/rosalind.txt"
+       slurp
+       (#(clojure.string/split % #"\s+"))
+       frequencies
+       (into [])
+       (map (fn [[a b]] (format "%s %s" a b)))
+       (clojure.string/join "\n")))
+
+
+
+;; Binary search (http://rosalind.info/problems/bins/)
+(defn file->ints [txt]
+  (->> txt
+       (#(clojure.string/split % #"\n"))
+       (map (comp vec
+                  (partial map #(Integer. %))
+                  #(clojure.string/split % #" ")))))
+
+
+
+(defn index-of [[k & more :as ks] x]
+  (cond
+    (= k x) 1
+    (empty? more) -1
+    :else
+    (let [ks (vec ks)
+          pivot (-> ks count (/ 2) int)
+          [half ofs] (if (< x (nth ks pivot))
+                       [(subvec ks 0 pivot) 0]
+                       [(subvec ks pivot) pivot])]
+      (let [res (index-of half x)]
+        (if (neg? res)
+          -1
+          (+ res ofs))))))
+
+
+(comment
+  (let [txt "5
+6
+10 20 30 40 50
+40 10 35 15 40 20"
+        txt (slurp "/Users/jacobsen/Desktop/rosalind_bins.txt")
+        [_ _ a k] (file->ints txt)]
+    (->> k
+         (map (partial index-of a))
+         println
+         with-out-str
+         (spit "/Users/jacobsen/Desktop/result.txt"))))
 
